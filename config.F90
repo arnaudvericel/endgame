@@ -17,8 +17,8 @@ module config
  real,public              :: T0
  real,public              :: cs0
  real,public              :: eta0
- real,public              :: a
- real,public              :: b
+ real,public              :: phi
+ real,public              :: w
 
 !- Dust related
  real,public              :: epsi0

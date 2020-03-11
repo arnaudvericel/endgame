@@ -86,6 +86,7 @@ program endgame
  call system('cp dust.in ' // ' ' // adjustl(trim(dir)))
  call system('mv dust.dat ' // ' ' // adjustl(trim(dir)))
  call system('cp disc.in' // ' ' // adjustl(trim(dir)))
+ call system('cp columns' // ' ' // adjustl(trim(dir)))
 
 #ifdef THANOS
 write(6,50)

@@ -6,9 +6,9 @@ subroutine init()
  use config,     only:p,q,mdisc,mstar,rin,rout,r0,T0,mu,epsi0,rho1,rho2,ifrag,isnow,rsnow,&
 Tsnow,nsteps,nmax,sigma_g0,cs0,dt,tmax,rho_g0,vfrag,vfragin,&
 vfragout,alpha,smin,iam,iwas,rho,abun,mratio,ndust,output,iamhere,ndumps,istate,&
-rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,dir
+rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir
  use config,      only:pi,au,solarm,kboltz,mh
- use functions,  only:omega_k,vk,cs,h,hoverr,press,Temp,a,b,epsimax
+ use functions,  only:omega_k,vk,cs,h,hoverr,press,Temp,epsimax
 
  integer             :: i = 0
  logical             :: iexist = .false.
@@ -19,7 +19,7 @@ rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,dir
  open(unit=1,file="disc.in",form="formatted",status="old",action="read")
  read(1,*)
  read(1,*)
- read(1,*) p,q,mdisc,mstar,rin,rout,r0,T0,mu,alpha,a,b
+ read(1,*) p,q,mdisc,mstar,rin,rout,r0,T0,mu,alpha,phi,w
  read(1,*)
  read(1,*)
  read(1,*)
@@ -67,7 +67,7 @@ rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,dir
     write(toto(3),'(a)') ' '
  endif
  if (ibump == 0) write(toto(4),'(a)') ' '
- if (ibump == 1) write(toto(4),'(a,i1,a,f2.1,a,i4)') 'b',ibump,'a',a,'w',int(b)
+ if (ibump == 1) write(toto(4),'(a,i1,a,f2.1,a,i4)') 'b',ibump,'phi',phi,'w',int(w)
  if (istate == 0) write(toto(5),'(a)') ' '
  if (istate == 1) write(toto(5),'(a,i1,a,f3.2)') 'st',istate,'mr',mratio
 
@@ -90,9 +90,8 @@ rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,dir
  rin = rin * au
  rout = rout * au
  r0 = r0 * au
- b = log(2.)*2.302585093* (rsnow/b)**2
+ w = w * au
  rsnow = rsnow * au
- a = 1/a
  sigma_g0 = mdisc/(2*pi) / (r0**2/(2-p)*((rout/r0)**(2-p) &
 - (rin/r0)**(2-p)) + ibump*sqrt(pi)/4*(erf((rout-rsnow)/rsnow)-erf((rin-rsnow)/rsnow)))
  cs0 = sqrt(kboltz*T0/(mu*mh))
