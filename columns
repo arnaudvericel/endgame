@@ -1,6 +1,8 @@
 t
 r
 |v_r|
+v_drift
+v_visc
 s
 ds/dt
 St

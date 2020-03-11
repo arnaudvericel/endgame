@@ -6,7 +6,7 @@ p	q	mdisc(solarm)	mstar (solarm)	rin(AU)	rout(AU)	r0 (AU)	T0 (at r0 ,K)	mu	alpha
 epsilon	rho1 (g/cm3)	rho2 (g/cm3)	smin(m)	epsimax (if bump=yes)
 0.01	1		1		1e-5	0.1
 
-#Physics run options#
+#Physics run options# 
 Vfrag (m/s)	Vfragin (m/s)	Vfragout (m/s)	rsnow (AU)	Tsnow (K)	rhog,j/rhod,i	mratio(1)
 15		5		15		100		20		0.01		0.5
 
@@ -19,5 +19,5 @@ dt as the number of steps per orbits at r0	tmax as the number of orbits at r0	to
 2						500000					5000
 
 #Output directory
-Name of the disc	already exist in current directory ? (1=yes,0=no)
-Steep			1
+Name of the output directory
+Steep

@@ -1,11 +1,11 @@
 !- Mathematical functions used by endgame
 module functions
- use config,    only:r0,T0,cs0,sigma_g0,p,q,mstar,rho_g0,eta0,rsnow,epsi0,ibump,a,b,epsimax
+ use config,    only:r0,T0,cs0,sigma_g0,p,q,mstar,rho_g0,eta0,rsnow,epsi0,ibump,a,b,epsimax,alpha
  use config,     only:gg,pi,au,earthr
 
  implicit none
 
- public         :: sigma_g,Temp,omega_k,cs,vdrift,rho_g,vk,hoverr,h,epsi
+ public         :: sigma_g,Temp,omega_k,cs,vdrift,vvisc,rho_g,vk,hoverr,h,epsi
 
  contains
 
@@ -19,7 +19,7 @@ end function sigma_g
 real function rho_g(r)
  real, intent(in) :: r
 
- rho_g = sigma_g(r)/(2*pi*h(r))
+ rho_g = sigma_g(r)/(sqrt(2*pi)*h(r))
  return
 end function rho_g
 
@@ -58,6 +58,23 @@ real function vdrift(St,r)
 (press(r+earthr)-press(r-earthr))/(2*earthr)
  return
 end function vdrift
+
+real function vvisc(St,r)
+ real, intent(in) :: St,r
+ real             :: denom,num,tmp1,tmp2 
+ denom = 0.5*r*rho_g(r)*vk(r)
+ tmp1 = -1.5*rho_g(r-earthr)*nu(r-earthr)*(r-earthr)**2*omega_k(r-earthr)
+ tmp2 = -1.5*rho_g(r+earthr)*nu(r+earthr)*(r+earthr)**2*omega_k(r+earthr)
+ num = (tmp2-tmp1)/(2*earthr)
+ vvisc = num/denom * (1+epsi(r))/((1+epsi(r))**2 + St**2)
+ return
+end function vvisc
+
+real function nu(r)
+ real, intent(in) :: r
+ nu = alpha*cs(r)*h(r)
+ return
+end function nu
 
 real function hoverr(r)
  real, intent(in) :: r

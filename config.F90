@@ -66,10 +66,10 @@ module config
  logical,public           :: iexist(200)
  logical,public           :: iamhere
 
- integer,public           :: idir
-
 !- actual variables that evolve during the simulation
  real,public              :: vd(200)
+ real,public              :: vdri(200)
+ real,public              :: vvi(200)
  real,public              :: vz(200)
  real,public              :: St(200)
  real,public              :: vrelonvfrag(200)

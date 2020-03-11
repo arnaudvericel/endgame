@@ -6,11 +6,12 @@ subroutine init()
  use config,     only:p,q,mdisc,mstar,rin,rout,r0,T0,mu,epsi0,rho1,rho2,ifrag,isnow,rsnow,&
 Tsnow,nsteps,nmax,sigma_g0,cs0,dt,tmax,rho_g0,vfrag,vfragin,&
 vfragout,alpha,smin,iam,iwas,rho,abun,mratio,ndust,output,iamhere,ndumps,istate,&
-rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,idir,dir
+rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,dir
  use config,      only:pi,au,solarm,kboltz,mh
  use functions,  only:omega_k,vk,cs,h,hoverr,press,Temp,a,b,epsimax
 
  integer             :: i = 0
+ logical             :: iexist = .false.
 
  !- Read from disc.in file
  inquire(file='disc.in', exist=iamhere)
@@ -38,10 +39,17 @@ rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,idir,dir
  read(1,*)
  read(1,*)
  read(1,*)
- read(1,*) disc,idir
+ read(1,*) disc
  close(1)
 
- if (idir == 0) call system('mkdir '// adjustl(trim(disc)))
+ inquire(file=disc, exist=iexist)
+ 
+ if (.not. iexist) then
+    call system('mkdir '// adjustl(trim(disc)))
+    write(*,*) "Creating directory ",adjustl(trim(disc))
+ else
+    write(*,*) "Directory ",adjustl(trim(disc)), " already present, skipping creation"
+ endif
 
  write(toto(1),'(a,i1)') 'g',igrow
  if (ifrag == 1) then
@@ -69,8 +77,13 @@ rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,idir,dir
 
  write(dir,*) adjustl(trim(disc)) // '/' // trim(toto(1)) // trim(toto(2)) // trim(toto(3)) // trim(toto(4)) // trim(toto(5))
 
- call system('mkdir ' // dir)
-
+ inquire(file=adjustl(trim(dir)), exist=iexist)
+ if (.not. iexist) then
+    call system('mkdir ' // dir)
+    write(*,*) "Creating directory ",dir
+ else
+    write(*,*) "Directory ",adjustl(trim(dir)), " already present, skipping creation"
+ endif
  !- Initialise parameters using the infile
  mdisc = mdisc * solarm
  mstar = mstar * solarm
@@ -144,14 +157,14 @@ rho,s,r,ibump,a,b,epsimax,iam,iwas,igrow,disc,toto,idir,dir
 
 end subroutine init
 
-subroutine evol(r,s,dsdt,vd,St,vrelonvfrag,rho,iam,iwas)
+subroutine evol(r,s,dsdt,vd,vdri,vvi,St,vrelonvfrag,rho,iam,iwas)
  use config,     only:dt,alpha,ifrag,vfrag,smin,vfragin,vfragout,&
 rsnow,Tsnow,isnow,istate,igrow
- use functions,  only:rho_g,cs,omega_k,vdrift,Temp,epsi!,vset
+ use functions,  only:rho_g,cs,omega_k,vdrift,vvisc,Temp,epsi!,vset
  use config,     only:Ro
 
  real, intent(inout)    :: r,s,rho
- real, intent(out)      :: St,dsdt,vrelonvfrag,vd
+ real, intent(out)      :: St,dsdt,vrelonvfrag,vd,vdri,vvi
 
  integer, intent(inout) :: iam,iwas
 
@@ -201,7 +214,9 @@ rsnow,Tsnow,isnow,istate,igrow
     iwas = iam
  endif
 
- vd = vdrift(St,r)
+ vdri = vdrift(St,r)
+ vvi  = vvisc(St,r)
+ vd = vdri + vvi
  r  = r + vd*dt
 
 end subroutine evol
