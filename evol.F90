@@ -92,8 +92,12 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir
  r0 = r0 * au
  w = w * au
  rsnow = rsnow * au
- sigma_g0 = mdisc/(2*pi) / (r0**2/(2-p)*((rout/r0)**(2-p) &
-- (rin/r0)**(2-p)) + ibump*sqrt(pi)/4*(erf((rout-rsnow)/rsnow)-erf((rin-rsnow)/rsnow)))
+ if (abs(p-2.) < 1.e-5) then
+    sigma_g0 = mdisc/(2*pi) / (r0**2/(2-p)*((rout/r0)**(2-p) &
+    - (rin/r0)**(2-p)) + ibump*sqrt(pi/2)*w*(erf((rsnow-rin)/(sqrt(2.)*w))-erf((rsnow-rout)/(sqrt(2.)*w))))
+ else
+    sigma_g0 = mdisc/(2*pi*r0**2*log(rout/rin) + ibump*sqrt(pi/2)*w*(erf((rsnow-rin)/(sqrt(2.)*w))-erf((rsnow-rout)/(sqrt(2.)*w))))
+ endif
  cs0 = sqrt(kboltz*T0/(mu*mh))
  rho_g0 = sigma_g0 / (sqrt(2*pi)*cs0/omega_k(r0))
  rho1 = rho1 * 1000

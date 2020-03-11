@@ -1,6 +1,6 @@
 #Disc parameters#
-p	q	mdisc(solarm)	mstar (solarm)	rin(AU)	rout(AU)	r0 (AU)	T0 (at r0 ,K)	mu	alpha	a(as a fraction of sigma0)	w(half width at half maximum in AU)
-1	0.5	0.01		1		1	300		1	200		2.32	0.01	0.1				10
+p	q	mdisc(solarm)	mstar (solarm)	rin(AU)	rout(AU)	r0 (AU)	T0 (at r0 ,K)	mu	alpha	phi(as a fraction of sigma0)	w(half width at half maximum in AU)
+1	0.5	0.05		1		1	300		1	200		2.32	0.01	0.15				10
 	
 #Dust parameters#	
 epsilon	rho1 (g/cm3)	rho2 (g/cm3)	smin(m)	epsimax (if bump=yes)
@@ -8,7 +8,7 @@ epsilon	rho1 (g/cm3)	rho2 (g/cm3)	smin(m)	epsimax (if bump=yes)
 
 #Physics run options# 
 Vfrag (m/s)	Vfragin (m/s)	Vfragout (m/s)	rsnow (AU)	Tsnow (K)	rhog,j/rhod,i	mratio(1)
-15		5		15		100		20		0.01		0.5
+15		5		20		25		20		0.01		0.5
 
 #Control options#
 igrow(0=no,1=yes)	ifrag(0=no,1=yes)	isnow(0=no,1=pos,2=temp)	ibump(0=no,1=yes)	istate(0=no,1=yes)
