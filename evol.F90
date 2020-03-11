@@ -15,6 +15,7 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
 
  !- Read from disc.in file
  inquire(file='disc.in', exist=iamhere)
+ write(*,*) "Reading input file disc.in"
  if (iamhere .eqv. .false.) print*, 'Error: input file disc.in not found'
  open(unit=1,file="disc.in",form="formatted",status="old",action="read")
  read(1,*)
@@ -80,7 +81,7 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
  inquire(file=adjustl(trim(dir)), exist=iexist)
  if (.not. iexist) then
     call system('mkdir ' // dir)
-    write(*,*) "Creating directory ",dir
+    write(*,*) "Creating directory",dir
  else
     write(*,*) "Directory ",adjustl(trim(dir)), " already present, skipping creation"
  endif
@@ -110,6 +111,7 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
 
  !- Read from dust.in file
  inquire(file='dust.in', exist=iamhere)
+ write(*,*) "Reading input file dust.in"
  if (iamhere .eqv. .false.) print*, 'Error: input file dust.in not found'
  open(unit=70,file="dust.in",form="formatted",status="old",action="read")
  read(70,*)
@@ -146,7 +148,7 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
  enddo
  close(666)
 
- write(6,'(a,i3,a)')'The Physical properties of your disc at ',int(r0/au), ' AU:'
+ write(6,'(a,i3,a)')'The Physical properties of the disc at ',int(r0/au), ' AU:'
  write(6,'(a,es8.2,a)')'sigma_gas = ',sigma_g0, ' kg/m2'
  write(6,'(a,es8.2,a)')'cs        = ',cs0,      ' m/s'
  write(6,'(a,es8.2,a)')'rho_gas   = ',rho_g0,   ' kg/m3'
