@@ -6,7 +6,7 @@ subroutine init()
  use config,     only:p,q,mdisc,mstar,rin,rout,r0,T0,mu,epsi0,rho1,rho2,ifrag,isnow,rsnow,&
 Tsnow,nsteps,nmax,sigma_g0,cs0,dt,tmax,rho_g0,vfrag,vfragin,&
 vfragout,alpha,smin,iam,iwas,rho,abun,mratio,ndust,output,iamhere,ndumps,istate,&
-rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir
+rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
  use config,      only:pi,au,solarm,kboltz,mh
  use functions,  only:omega_k,vk,cs,h,hoverr,press,Temp,epsimax
 
@@ -27,7 +27,7 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir
  read(1,*)
  read(1,*)
  read(1,*)
- read(1,*) vfrag,vfragin,vfragout,rsnow,Tsnow,abun,mratio
+ read(1,*) vfrag,vfragin,vfragout,rsnow,rbump,Tsnow,abun,mratio
  read(1,*)
  read(1,*)
  read(1,*)
@@ -92,11 +92,12 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir
  r0 = r0 * au
  w = w * au
  rsnow = rsnow * au
- if (abs(p-2.) < 1.e-5) then
+ rbump = rbump * au
+ if (.not. (abs(p-2.) < 1.e-5)) then
     sigma_g0 = mdisc/(2*pi) / (r0**2/(2-p)*((rout/r0)**(2-p) &
-    - (rin/r0)**(2-p)) + ibump*sqrt(pi/2)*w*(erf((rsnow-rin)/(sqrt(2.)*w))-erf((rsnow-rout)/(sqrt(2.)*w))))
+    - (rin/r0)**(2-p)) + ibump*sqrt(pi/2)*w*(erf((rbump-rin)/(sqrt(2.)*w))-erf((rbump-rout)/(sqrt(2.)*w))))
  else
-    sigma_g0 = mdisc/(2*pi*r0**2*log(rout/rin) + ibump*sqrt(pi/2)*w*(erf((rsnow-rin)/(sqrt(2.)*w))-erf((rsnow-rout)/(sqrt(2.)*w))))
+    sigma_g0 = mdisc/(2*pi*r0**2*log(rout/rin) + ibump*sqrt(pi/2)*w*(erf((rbump-rin)/(sqrt(2.)*w))-erf((rbump-rout)/(sqrt(2.)*w))))
  endif
  cs0 = sqrt(kboltz*T0/(mu*mh))
  rho_g0 = sigma_g0 / (sqrt(2*pi)*cs0/omega_k(r0))

@@ -1,6 +1,6 @@
 !- Mathematical functions used by endgame
 module functions
- use config,    only:r0,T0,cs0,sigma_g0,p,q,mstar,rho_g0,eta0,rsnow,epsi0,ibump,phi,w,epsimax,alpha
+ use config,    only:r0,T0,cs0,sigma_g0,p,q,mstar,rho_g0,eta0,rbump,epsi0,ibump,phi,w,epsimax,alpha
  use config,     only:gg,pi,au,earthr
 
  implicit none
@@ -12,7 +12,7 @@ module functions
 real function sigma_g(r)
  real, intent(in) :: r
 
- sigma_g = sigma_g0*(r/r0)**(-p) + ibump*phi*sigma_g0*exp(-(r-rsnow)**2/(2*w**2))
+ sigma_g = sigma_g0*(r/r0)**(-p) + ibump*phi*sigma_g0*exp(-(r-rbump)**2/(2*w**2))
  return
 end function sigma_g
 
@@ -100,7 +100,7 @@ end function press
 real function epsi(r)
  real, intent(in) :: r
 
- epsi = epsi0 + ibump*(epsimax-epsi0)*exp(-(r-rsnow)**2/(2*w**2))
+ epsi = epsi0 + ibump*(epsimax-epsi0)*exp(-(r-rbump)**2/(2*w**2))
  return
 end function epsi
 

@@ -26,6 +26,7 @@ module config
  real,public              :: rho2
  real,public              :: Tsnow
  real,public              :: rsnow
+ real,public              :: rbump
  real,public              :: vfrag
  real,public              :: vfragin
  real,public              :: vfragout
