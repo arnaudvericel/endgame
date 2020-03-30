@@ -53,20 +53,22 @@ end function vk
 
 real function vdrift(St,r)
  real, intent(in) :: St,r
-
- vdrift = r/press(r)*hoverr(r)**2*St/((1+epsi(r))**2+St**2)*vk(r)*&
-(press(r+earthr)-press(r-earthr))/(2*earthr)
+ real             :: deriv
+ 
+ deriv = hoverr(r)**2 * vk(r) * ((press(r+earthr) - press(r-earthr))/(2*earthr)) * r/press(r)
+ 
+ vdrift = St / ((1+epsi(r))**2 + St**2) * deriv
  return
 end function vdrift
 
 real function vvisc(St,r)
  real, intent(in) :: St,r
- real             :: denom,num,tmp1,tmp2 
- denom = 0.5*r*rho_g(r)*vk(r)
- tmp1 = -1.5*rho_g(r-earthr)*nu(r-earthr)*(r-earthr)**2*omega_k(r-earthr)
- tmp2 = -1.5*rho_g(r+earthr)*nu(r+earthr)*(r+earthr)**2*omega_k(r+earthr)
- num = (tmp2-tmp1)/(2*earthr)
- vvisc = num/denom * (1+epsi(r))/((1+epsi(r))**2 + St**2)
+ real             :: K, deriv
+
+ K = 3/(r*rho_g(r)*vk(r))
+ deriv = (rho_g(r+earthr)*nu(r+earthr)*(r+earthr)*vk(r+earthr) - rho_g(r-earthr)*nu(r-earthr)*(r-earthr)*vk(r-earthr)) / (2*earthr)
+ 
+ vvisc = (1+epsi(r))/((1+epsi(r))**2 + St**2) * K * deriv
  return
 end function vvisc
 

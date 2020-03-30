@@ -164,7 +164,7 @@ subroutine evol(r,s,dsdt,vd,vdri,vvi,St,vrelonvfrag,rho,iam,iwas)
  use config,     only:dt,alpha,ifrag,vfrag,smin,vfragin,vfragout,&
 rsnow,Tsnow,isnow,istate,igrow
  use functions,  only:rho_g,cs,omega_k,vdrift,vvisc,Temp,epsi!,vset
- use config,     only:Ro
+ use config,     only:Ro,racc
 
  real, intent(inout)    :: r,s,rho
  real, intent(out)      :: St,dsdt,vrelonvfrag,vd,vdri,vvi
@@ -220,7 +220,7 @@ rsnow,Tsnow,isnow,istate,igrow
  vdri = vdrift(St,r)
  vvi  = vvisc(St,r)
  vd = vdri + vvi
- r  = r + vd*dt
+ if (r > racc) r  = r + vd*dt
 
 end subroutine evol
 
