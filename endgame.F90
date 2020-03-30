@@ -4,8 +4,7 @@
 !-------
 
 program endgame
- use config,      only: tmax,dt,rin,nsteps,nmax,r,s,St,vrelonvfrag,vd,vdri,vvi,rho,ndumps,dir,&
-                        au,years,step,nprev,ntic,iexist,ndust,output,iam,iwas,dsdt
+ use config
  use evolve,      only: evol,init
  use functions,   only: rho_g,epsi,press
 
@@ -42,7 +41,7 @@ program endgame
     do k=1,ndust
        if (skip(k) == 1) cycle
        call evol(r(k),s(k),dsdt(k),vd(k),vdri(k),vvi(k),St(k),vrelonvfrag(k),rho(k),iam(k),iwas(k))
-       if (r(k) < rin) skip(k) = 1
+       if (r(k) < racc) skip(k) = 1
     enddo
     t = t + dt
     step = step + 1

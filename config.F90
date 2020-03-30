@@ -6,6 +6,7 @@ module config
  real,public              :: p
  real,public              :: q
  real,public              :: r0
+ real,public              :: racc
  real,public              :: rin
  real,public              :: rout
  real,public              :: mdisc
@@ -59,9 +60,9 @@ module config
  integer,public           :: ibump
 
 !- files related
- character(len=10),public :: output(200)
- character(len=30),public :: disc
- character(len=15),public :: toto(5)
+ character(len=10),public  :: output(200)
+ character(len=30),public  :: disc
+ character(len=15),public  :: toto(5)
  character(len=100),public :: dir
 
  logical,public           :: iexist(200)

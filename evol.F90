@@ -3,15 +3,12 @@ implicit none
 contains
 !-- initialise run
 subroutine init()
- use config,     only:p,q,mdisc,mstar,rin,rout,r0,T0,mu,epsi0,rho1,rho2,ifrag,isnow,rsnow,&
-Tsnow,nsteps,nmax,sigma_g0,cs0,dt,tmax,rho_g0,vfrag,vfragin,&
-vfragout,alpha,smin,iam,iwas,rho,abun,mratio,ndust,output,iamhere,ndumps,istate,&
-rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
- use config,      only:pi,au,solarm,kboltz,mh
+ use config
  use functions,  only:omega_k,vk,cs,h,hoverr,press,Temp,epsimax
 
  integer             :: i = 0
- logical             :: iexist = .false.
+ logical             :: exist = .false.
+ real                :: titeuf
 
  !- Read from disc.in file
  inquire(file='disc.in', exist=iamhere)
@@ -20,7 +17,7 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
  open(unit=1,file="disc.in",form="formatted",status="old",action="read")
  read(1,*)
  read(1,*)
- read(1,*) p,q,mdisc,mstar,rin,rout,r0,T0,mu,alpha,phi,w
+ read(1,*) p,q,mdisc,mstar,racc,rin,rout,r0,T0,mu,alpha,phi,w
  read(1,*)
  read(1,*)
  read(1,*)
@@ -43,9 +40,9 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
  read(1,*) disc
  close(1)
 
- inquire(file=disc, exist=iexist)
+ inquire(file=disc, exist=exist)
  
- if (.not. iexist) then
+ if (.not. exist) then
     call system('mkdir '// adjustl(trim(disc)))
     write(*,*) "Creating directory ",adjustl(trim(disc))
  else
@@ -78,8 +75,8 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
 
  write(dir,*) adjustl(trim(disc)) // '/' // trim(toto(1)) // trim(toto(2)) // trim(toto(3)) // trim(toto(4)) // trim(toto(5))
 
- inquire(file=adjustl(trim(dir)), exist=iexist)
- if (.not. iexist) then
+ inquire(file=adjustl(trim(dir)), exist=exist)
+ if (.not. exist) then
     call system('mkdir ' // dir)
     write(*,*) "Creating directory",dir
  else
@@ -119,7 +116,7 @@ rho,s,r,ibump,phi,w,epsimax,iam,iwas,igrow,disc,toto,dir,rbump
  read(70,*)
  read(70,*)
  do i=1,ndust
-    read(70,*) s(i),r(i),rho(i)
+    read(70,*) titeuf,s(i),r(i),rho(i)
     r(i) = r(i) * au
     if (isnow > 0) rho(i) = (mratio*rho1 + (1-mratio)*rho2)
     if (isnow == 0) rho(i) = rho(i) * 1000
@@ -228,7 +225,7 @@ rsnow,Tsnow,isnow,istate,igrow
 end subroutine evol
 
 subroutine condense(s,rho,r)
- use config,     only:rho1,rho2,abun,smin
+ use config,     only:rho1,rho2,abun
  use functions,  only:epsi
  real,intent(inout)    :: s,rho
  real,intent(in)       :: r
@@ -238,7 +235,6 @@ subroutine condense(s,rho,r)
  lambda = abun/epsi(r)*rho1/rho2
 
  s = s * (1 + lambda)**(1./3.)
- if (s < smin) s = smin
  rho = (rho + lambda*rho2) / (1 + lambda)
 
 end subroutine condense
@@ -247,7 +243,7 @@ subroutine sublimate(s,rho)
  use config,     only:rho1,rho2,mratio,smin
  real,intent(inout)    :: s,rho
 
- s = s * (mratio*rho2 / ((1-mratio)*rho1 + mratio*rho2))**(1./3.)
+ s = s * (rho2*(1-mratio) / (rho1*mratio + rho2*(1-mratio)))**(1./3.)
  if (s < smin) s = smin
  rho = rho1
 
