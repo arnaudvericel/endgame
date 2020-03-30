@@ -47,9 +47,10 @@ program endgame
     step = step + 1
     steptot = nmax * nsteps
     do k=1,ndust
-       if (mod(step,nsteps*nmax/ndumps) == 0) write(k+100,*) t/years,r(k)/au,&
-       abs(vd(k)),vdri(k),vvi(k),s(k),dsdt(k)*years*1000,St(k),vrelonvfrag(k),&
-       rho(k),rho_g(r(k)),epsi(r(k)),press(r(k))
+       if (mod(step,nsteps*nmax/ndumps) == 0) then
+          write(k+100,*) t/years,",",r(k)/au,",",abs(vd(k)),",",vdri(k),",",vvi(k),",",s(k),",",&
+          dsdt(k)*years*1000,",",St(k),",",vrelonvfrag(k),",",rho(k),",",rho_g(r(k)),",",epsi(r(k)),",",press(r(k))
+       endif
     enddo
     ntic = int(100 * real(step) / real(steptot))
     do k = nprev + 1, ntic
