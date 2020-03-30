@@ -5,7 +5,7 @@ DEBUG=-fcheck=all
 ifeq ($(THANOS), yes)
     FFLAGS += -DTHANOS
 endif
-SRC=endgame.F90 config.F90 functions.F90 evol.F90
+SRC=config.F90 functions.F90 initial.F90 evol.F90 endgame.F90
 OBJ=${SRC:.F90=.o}
 
 %.o: %.F90

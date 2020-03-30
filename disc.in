@@ -8,11 +8,11 @@ epsilon	rho1 (g/cm3)	rho2 (g/cm3)	smin(m)	epsimax (if bump=yes)
 
 #Physics run options# 
 Vfrag (m/s)	Vfragin (m/s)	Vfragout (m/s)	rsnow (AU)	rbump (AU)	Tsnow (K)	rhog,j/rhog	mass fraction of volatiles in grains
-15		5		15		100		100		20		0.01		0.05
+15		5		15		100		75		20		0.01		0.75
 
 #Control options#
 igrow(0=no,1=yes)	ifrag(0=no,1=yes)	isnow(0=no,1=pos,2=temp)	ibump(0=no,1=yes)	istate(0=no,1=yes)
-1			0			0				0			0
+1			1			1				1			0
 
 #Timestep options#
 dt as the number of steps per orbits at r0	tmax as the number of orbits at r0	total number of dumps desired

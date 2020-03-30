@@ -5,7 +5,8 @@
 
 program endgame
  use config
- use evolve,      only: evol,init
+ use initial,     only:init
+ use evolve,      only: evol
  use functions,   only: rho_g,epsi,press
 
  integer          :: k = 0,count = 0,skip(200) = 0
