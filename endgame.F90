@@ -83,13 +83,24 @@ program endgame
  enddo
 
  do k=1,ndust
-    call system('mv ' // output(k) // ' ' // adjustl(trim(dir)))
+    if (isort==1) then
+       call system('mv ' // output(k) // ' ' // adjustl(trim(dir)))
+    else
+       call system('mv ' // output(k) // ' buffer/')
+    endif
  enddo
 
- call system('cp dust.in ' // ' ' // adjustl(trim(dir)))
- call system('mv dust.dat ' // ' ' // adjustl(trim(dir)))
- call system('cp disc.in' // ' ' // adjustl(trim(dir)))
- call system('cp columns' // ' ' // adjustl(trim(dir)))
+if (isort==1) then   
+   call system('cp dust.in ' // ' ' // adjustl(trim(dir)))
+   call system('mv dust.dat ' // ' ' // adjustl(trim(dir)))
+   call system('cp disc.in' // ' ' // adjustl(trim(dir)))
+   call system('cp columns' // ' ' // adjustl(trim(dir)))
+else
+   call system('cp dust.in buffer/')
+   call system('mv dust.dat buffer/')
+   call system('cp disc.in buffer/')
+   call system('cp columns buffer/')
+endif
 
 #ifdef THANOS
 write(6,50)

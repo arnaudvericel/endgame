@@ -58,6 +58,8 @@ module config
  integer,public           :: isnow
  integer,public           :: istate
  integer,public           :: ibump
+ integer,public           :: isort
+ integer,public           :: ibr
 
 !- files related
  character(len=10),public  :: output(200)

@@ -29,7 +29,7 @@ module initial
  read(1,*)
  read(1,*)
  read(1,*)
- read(1,*) igrow,ifrag,isnow,ibump,istate
+ read(1,*) igrow,ifrag,isnow,ibump,istate,ibr
  read(1,*)
  read(1,*)
  read(1,*)
@@ -37,51 +37,63 @@ module initial
  read(1,*)
  read(1,*)
  read(1,*)
- read(1,*) disc
+ read(1,*) disc, isort
  close(1)
 
- inquire(file=disc, exist=exist)
  
- if (.not. exist) then
-    call system('mkdir '// adjustl(trim(disc)))
-    write(*,*) "Creating directory ",adjustl(trim(disc))
- else
-    write(*,*) "Directory ",adjustl(trim(disc)), " already present, skipping creation"
- endif
-
- write(toto(1),'(a,i1)') 'g',igrow
- if (ifrag == 1) then
-    if (isnow == 0) write(toto(2),'(a,i1,a,i2,a)') 'f',ifrag,'V',int(vfrag),' '
-    if (isnow == 1) then
-       write(toto(2),'(a)') 'f1'
-       write(toto(3),'(a,i1,a,i3,a,i2,a,i2)') 's',isnow,'r',int(rsnow),'V',int(vfragin),'-',int(vfragout)
+ if (isort == 1) then
+    inquire(file=disc, exist=exist)
+    if (.not. exist) then
+       call system('mkdir '// adjustl(trim(disc)))
+       write(*,*) "Creating directory ",adjustl(trim(disc))
+    else
+       write(*,*) "Directory ",adjustl(trim(disc)), " already present, skipping creation"
     endif
-    if (isnow == 2) then
-       write(toto(3),'(a,i1,a,i3,a,i2,a,i2)') 's',isnow,'T',int(Tsnow),'V',int(vfragin),'-',int(vfragout)
-       write(toto(2),'(a)') 'f1'
+
+    write(toto(1),'(a,i1)') 'g',igrow
+    if (ifrag == 1) then
+       if (isnow == 0) write(toto(2),'(a,i1,a,i2,a)') 'f',ifrag,'V',int(vfrag),' '
+       if (isnow == 1) then
+          write(toto(2),'(a)') 'f1'
+          write(toto(3),'(a,i1,a,i3,a,i2,a,i2)') 's',isnow,'r',int(rsnow),'V',int(vfragin),'-',int(vfragout)
+       endif
+       if (isnow == 2) then
+          write(toto(3),'(a,i1,a,i3,a,i2,a,i2)') 's',isnow,'T',int(Tsnow),'V',int(vfragin),'-',int(vfragout)
+          write(toto(2),'(a)') 'f1'
+       endif
+    else
+       write(toto(2),'(a)') ' '
+       write(toto(3),'(a)') ' '
+    endif
+    if (ibump == 0) write(toto(4),'(a)') ' '
+    if (ibump == 1) write(toto(4),'(a,i1,a,f2.1,a,i4)') 'b',ibump,'phi',phi,'w',int(w)
+    if (istate == 0) write(toto(5),'(a)') ' '
+    if (istate == 1) write(toto(5),'(a,i1,a,f3.2)') 'st',istate,'mr',mratio
+
+    do i=1,5
+       call stripspaces(toto(i))
+    enddo
+
+    write(dir,*) adjustl(trim(disc)) // '/' // trim(toto(1)) // trim(toto(2)) // trim(toto(3)) // trim(toto(4)) // trim(toto(5))
+
+    inquire(file=adjustl(trim(dir)), exist=exist)
+    if (.not. exist) then
+       call system('mkdir ' // dir)
+       write(*,*) "Creating directory",dir
+    else
+       write(*,*) "Directory ",adjustl(trim(dir)), " already present, skipping creation"
     endif
  else
-    write(toto(2),'(a)') ' '
-    write(toto(3),'(a)') ' '
+    inquire(file="buffer", exist=exist)
+    if (.not. exist) then
+       call system('mkdir buffer')
+       write(*,*) "Creating directory buffer"
+       dir = "buffer/"
+    else
+       write(*,*) "Buffer already present"
+    endif
  endif
- if (ibump == 0) write(toto(4),'(a)') ' '
- if (ibump == 1) write(toto(4),'(a,i1,a,f2.1,a,i4)') 'b',ibump,'phi',phi,'w',int(w)
- if (istate == 0) write(toto(5),'(a)') ' '
- if (istate == 1) write(toto(5),'(a,i1,a,f3.2)') 'st',istate,'mr',mratio
-
- do i=1,5
-    call stripspaces(toto(i))
- enddo
-
- write(dir,*) adjustl(trim(disc)) // '/' // trim(toto(1)) // trim(toto(2)) // trim(toto(3)) // trim(toto(4)) // trim(toto(5))
-
- inquire(file=adjustl(trim(dir)), exist=exist)
- if (.not. exist) then
-    call system('mkdir ' // dir)
-    write(*,*) "Creating directory",dir
- else
-    write(*,*) "Directory ",adjustl(trim(dir)), " already present, skipping creation"
- endif
+ 
  !- Initialise parameters using the infile
  mdisc = mdisc * solarm
  mstar = mstar * solarm

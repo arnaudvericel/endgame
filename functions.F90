@@ -1,7 +1,7 @@
 !- Mathematical functions used by endgame
 module functions
  use config,    only:r0,T0,cs0,sigma_g0,p,q,mstar,rho_g0,eta0,rbump,epsi0,ibump,phi,w,epsimax,alpha
- use config,     only:gg,pi,au,earthr
+ use config,     only:gg,pi,au,earthr,ibr
 
  implicit none
 
@@ -53,22 +53,34 @@ end function vk
 
 real function vdrift(St,r)
  real, intent(in) :: St,r
- real             :: deriv
+ real             :: deriv,eps
  
  deriv = hoverr(r)**2 * vk(r) * ((press(r+earthr) - press(r-earthr))/(2*earthr)) * r/press(r)
  
- vdrift = St / ((1+epsi(r))**2 + St**2) * deriv
+ if (ibr==1) then
+    eps=epsi(r)
+ else
+    eps = 0.
+ endif
+ 
+ vdrift = St / ((1+eps)**2 + St**2) * deriv
  return
 end function vdrift
 
 real function vvisc(St,r)
  real, intent(in) :: St,r
- real             :: K, deriv
+ real             :: K, deriv,eps
 
  K = 3/(r*rho_g(r)*vk(r))
  deriv = (rho_g(r+earthr)*nu(r+earthr)*(r+earthr)*vk(r+earthr) - rho_g(r-earthr)*nu(r-earthr)*(r-earthr)*vk(r-earthr)) / (2*earthr)
  
- vvisc = (1+epsi(r))/((1+epsi(r))**2 + St**2) * K * deriv
+ if (ibr==1) then
+    eps=epsi(r)
+ else
+    eps=0.
+ endif
+ 
+ vvisc = (1+eps)/((1+eps)**2 + St**2) * K * deriv
  return
 end function vvisc
 
