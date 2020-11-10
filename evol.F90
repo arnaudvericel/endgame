@@ -2,7 +2,7 @@ module evolve
  implicit none
  contains
 
-subroutine evol(r,s,dsdt,vd,vdri,vvi,St,vrelonvfrag,rho,iam,iwas)
+subroutine evol(r,s,dsdt,vd,vdri,vvi,St,vrelonvfrag,rho,iam,iwas,iacc)
  use config,     only:dt,alpha,ifrag,vfrag,smin,vfragin,vfragout,&
                       rsnow,Tsnow,isnow,istate,igrow,Ro,racc
  use functions,  only:rho_g,cs,omega_k,vdrift,vvisc,Temp,epsi!,vset
@@ -10,7 +10,7 @@ subroutine evol(r,s,dsdt,vd,vdri,vvi,St,vrelonvfrag,rho,iam,iwas)
  real, intent(inout)    :: r,s,rho
  real, intent(out)      :: St,dsdt,vrelonvfrag,vd,vdri,vvi
 
- integer, intent(inout) :: iam,iwas
+ integer, intent(inout) :: iam,iwas,iacc
 
  real                   :: vrel,ts
 
@@ -60,8 +60,14 @@ subroutine evol(r,s,dsdt,vd,vdri,vvi,St,vrelonvfrag,rho,iam,iwas)
 
  vdri = vdrift(St,r)
  vvi  = vvisc(St,r)
- vd = vdri + vvi
- if (r > racc) r  = r + vd*dt
+ vd   = vdri + vvi
+ r    = r + vd*dt
+ if (r <= racc) then
+    iacc = 1
+    r = racc
+ endif
+    
+ 
 
 end subroutine evol
 

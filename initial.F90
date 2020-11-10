@@ -37,9 +37,22 @@ module initial
  read(1,*)
  read(1,*)
  read(1,*)
- read(1,*) disc, isort
+ read(1,*) disc, isort, end_only
  close(1)
 
+ !- initialize to zero unused params
+ if (ifrag==0) vfrag=0.
+ if (isnow==0) then
+    vfragin = 0.
+    vfragout = 0.
+    rsnow = 0.
+    Tsnow = 0.
+ endif
+ if (ibump==0) then
+    epsimax = 0.
+    phi = 0.
+    w = 0.
+ endif
  
  if (isort == 1) then
     inquire(file=disc, exist=exist)
@@ -128,25 +141,29 @@ module initial
  read(70,*)
  read(70,*)
  do i=1,ndust
-    read(70,*) titeuf,s(i),r(i),rho(i)
-    r(i) = r(i) * au
+    read(70,*) titeuf,s_init(i),r_init(i),rho(i)
+    r(i) = r_init(i) * au
+    s(i) = s_init(i)
     if (isnow > 0) rho(i) = (mratio*rho1 + (1-mratio)*rho2)
     if (isnow == 0) rho(i) = rho(i) * 1000
     iam(i) = 0
     iwas(i) = 0
+    iacc(i) = 0
  enddo
  close(80)
 
 !- initialise dump files
- do i=1,ndust
-    if (i<10) then
-       write(output(i),'(a,i1,a)') 'p00',i,'.dat'
-    elseif (i<100) then
-       write(output(i),'(a,i2,a)') 'p0',i,'.dat'
-    else
-       write(output(i),'(a,i3,a)') 'p',i,'.dat'
-    endif
- enddo
+ if (end_only==0) then
+    do i=1,ndust
+       if (i<10) then
+          write(output(i),'(a,i1,a)') 'p00',i,'.dat'
+       elseif (i<100) then
+          write(output(i),'(a,i2,a)') 'p0',i,'.dat'
+       else
+          write(output(i),'(a,i3,a)') 'p',i,'.dat'
+       endif
+    enddo
+ endif
 
  !- write dust data file
  inquire(file='dust.dat', exist=iamhere)

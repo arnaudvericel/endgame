@@ -5,11 +5,13 @@
 
 program endgame
  use config
- use initial,     only:init
+ use initial,     only: init
  use evolve,      only: evol
  use functions,   only: rho_g,epsi,press
 
- integer          :: k = 0,count = 0,skip(200) = 0
+ integer          :: k         = 0
+ integer          :: count     = 0
+ integer          :: skip(200) = 0
 
  write (6,"('>',115('_'),'<')")
  write(6,40)
@@ -29,30 +31,34 @@ program endgame
  call init()
 
 !- open output files and overwrite them if they already exist
- do k=1,ndust
-    inquire(file=output(k), exist=iexist(k))
-    if (iexist(k)) then
-       open(unit=k+100,file=output(k),form="formatted",status="old",action="write")
-    else
-       open(unit=k+100,file=output(k),form="formatted",status="new",action="write")
-    endif
- enddo
+ if (end_only==0) then
+    do k=1,ndust
+       inquire(file=output(k), exist=iexist(k))
+       if (iexist(k)) then
+          open(unit=k+100,file=output(k),form="formatted",status="old",action="write")
+       else
+          open(unit=k+100,file=output(k),form="formatted",status="new",action="write")
+       endif
+    enddo
+ endif
 
  do while (t .le. tmax)
     do k=1,ndust
        if (skip(k) == 1) cycle
-       call evol(r(k),s(k),dsdt(k),vd(k),vdri(k),vvi(k),St(k),vrelonvfrag(k),rho(k),iam(k),iwas(k))
+       call evol(r(k),s(k),dsdt(k),vd(k),vdri(k),vvi(k),St(k),vrelonvfrag(k),rho(k),iam(k),iwas(k),iacc(k))
        if (r(k) < racc) skip(k) = 1
     enddo
     t = t + dt
     step = step + 1
     steptot = nmax * nsteps
-    do k=1,ndust
-       if (mod(step,nsteps*nmax/ndumps) == 0) then
-          write(k+100,*) t/years,",",r(k)/au,",",abs(vd(k)),",",vdri(k),",",vvi(k),",",s(k),",",&
-          dsdt(k)*years*1000,",",St(k),",",vrelonvfrag(k),",",rho(k),",",rho_g(r(k)),",",epsi(r(k)),",",press(r(k))
-       endif
-    enddo
+    if (end_only==0) then
+       do k=1,ndust
+          if (mod(step,nsteps*nmax/ndumps) == 0) then
+             write(k+100,*) t/years,",",r(k)/au,",",abs(vd(k)),",",vdri(k),",",vvi(k),",",s(k),",",&
+             dsdt(k)*years*1000,",",St(k),",",vrelonvfrag(k),",",rho(k),",",rho_g(r(k)),",",epsi(r(k)),",",press(r(k))
+          endif
+       enddo
+    endif
     ntic = int(100 * real(step) / real(steptot))
     do k = nprev + 1, ntic
        if (mod(k,10) == 0) then
@@ -85,21 +91,56 @@ program endgame
  do k=1,ndust
     if (isort==1) then
        call system('mv ' // output(k) // ' ' // adjustl(trim(dir)))
-    else
+    elseif (end_only==0) then
        call system('mv ' // output(k) // ' buffer/')
     endif
  enddo
 
-if (isort==1) then   
+if (isort==1) then
    call system('cp dust.in ' // ' ' // adjustl(trim(dir)))
    call system('mv dust.dat ' // ' ' // adjustl(trim(dir)))
    call system('cp disc.in' // ' ' // adjustl(trim(dir)))
    call system('cp columns' // ' ' // adjustl(trim(dir)))
-else
+elseif (end_only==0) then
    call system('cp dust.in buffer/')
    call system('mv dust.dat buffer/')
    call system('cp disc.in buffer/')
    call system('cp columns buffer/')
+endif
+
+!- if end_only, print final state to csv file
+if (end_only==1) then
+   open(unit=444, file='particle_accretion.csv', access='append', status='old')
+   do i=1,ndust
+      write(444,*) p,",", &
+                   q,",", &
+                   mdisc,",", &
+                   racc,",", &
+                   rin,",", &
+                   rout,",", &
+                   r0,",", &
+                   T0,",", &
+                   alpha,",", &
+                   phi,",", &
+                   w,",", &
+                   epsi0,",", &
+                   epsimax,",", &
+                   rho(i),",", &
+                   vfrag,",", &
+                   vfragin,",", &
+                   vfragout,",", &
+                   rsnow,",", &
+                   rbump,",", &
+                   igrow,",", &
+                   ifrag,",", &
+                   isnow,",", &
+                   ibump,",", &
+                   r_init(i),",", &
+                   s_init(i),",", &
+                   nmax,",", &
+                   iacc(i)
+   enddo
+   close(unit=444)
 endif
 
 #ifdef THANOS
@@ -157,7 +198,7 @@ write(6,50)
 #endif
 
  do k = 1,ndust
-    if (r(k) > rin) count = count + 1
+    if (iacc(k)==0) count = count + 1
  enddo
  if (count >= 1) then
 #ifdef THANOS

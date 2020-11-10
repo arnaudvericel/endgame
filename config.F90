@@ -39,6 +39,7 @@ module config
  integer,public           :: ndust
  integer,public           :: iam(200)
  integer,public           :: iwas(200)
+ integer,public           :: iacc(200)
 
 !- Timestep related
  real,public              :: dt
@@ -60,6 +61,7 @@ module config
  integer,public           :: ibump
  integer,public           :: isort
  integer,public           :: ibr
+ integer,public           :: end_only
 
 !- files related
  character(len=10),public  :: output(200)
@@ -78,6 +80,8 @@ module config
  real,public              :: St(200)
  real,public              :: vrelonvfrag(200)
  real,public              :: r(200)
+ real,public              :: r_init(200)
+ real,public              :: s_init(200)
  real,public              :: z(200)
  real,public              :: s(200)
  real,public              :: dsdt(200)
