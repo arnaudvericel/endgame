@@ -1,4 +1,4 @@
-# endgame
+# endgame (Fortran version)
 
 Endgame is a 1D evolution code for simulating growing and fragmenting dust in the presence of snow lines and particle trapping.
 
